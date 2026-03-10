@@ -156,17 +156,17 @@ const MenuItems = ({
         onValueChange={setActiveCategory}
         className="w-full"
       >
-        <TabsList className="w-full mb-6 bg-zinc-900 rounded-full p-1 shadow-md border border-orange-900 overflow-x-auto overflow-y-hidden no-scrollbar flex-nowrap">
+        <TabsList className="w-full mb-6 bg-zinc-900 rounded-full p-1 shadow-md border border-orange-900 overflow-x-auto overflow-y-hidden no-scrollbar flex gap-2">
           {categories.map((category) => (
-            <TabsTrigger
-              key={category.id}
-              value={category.id}
-              className="flex-1 rounded-full data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-300 py-2.5 flex items-center justify-center text-orange-300 whitespace-nowrap"
-            >
-              {category.icon}
-              {category.name}
-            </TabsTrigger>
-          ))}
+    <TabsTrigger
+      key={category.id}
+      value={category.id}
+      className="shrink-0 rounded-full data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-300 py-2.5 px-4 flex items-center justify-center text-orange-300 whitespace-nowrap"
+    >
+      {category.icon}
+      {category.name}
+    </TabsTrigger>
+        ))}
         </TabsList>
 
         {showFilters && availableTags.length > 0 && (

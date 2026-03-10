@@ -204,7 +204,7 @@ const Cart = ({ items, onUpdateQuantity, onRemoveItem, onClear, whatsappNumber =
         </div>
         <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
           <ShoppingBag className="h-16 w-16 text-orange-500/50 mb-4" />
-          <h3 className="text-lg font-medium mb-2 text-white">Tu carrito está vacío</h3>
+          <h3 className="text-lg font-medium mb-2 text-white">Tu pedido está vacío</h3>
           <p className="text-zinc-300">Sumá productos del menú para empezar.</p>
           {!storeStatus.isOpen && (
             <p className="mt-3 text-xs text-zinc-400 max-w-[26ch]">

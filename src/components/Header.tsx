@@ -77,7 +77,7 @@ const Header = ({
             onClick={onCartClick}
           >
             <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2 text-orange-300" />
-            <span className="hidden sm:inline">Carrito</span>
+            <span className="hidden sm:inline">Pedido Actual</span>
             {cartItemCount > 0 && (
               <Badge className="absolute -top-2 -right-2 px-1.5 py-0.5 text-xs bg-orange-600 hover:bg-orange-700 border border-orange-900/40">
                 {cartItemCount}
