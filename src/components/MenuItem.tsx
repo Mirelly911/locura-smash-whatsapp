@@ -1,8 +1,9 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { PlusCircle, Eye, Star, Clock, Flame } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { motion } from "framer-motion";
+import { formatGs } from "../lib/utils";
 
 interface MenuItemProps {
   id?: string;
@@ -10,130 +11,165 @@ interface MenuItemProps {
   description?: string;
   price?: number;
   image?: string;
+  category?: string;
   onAddToCart?: () => void;
   onViewDetails?: () => void;
   featured?: boolean;
   tags?: string[];
-  prepTime?: string;
-  spicyLevel?: number;
-  rating?: number;
 }
 
 const MenuItem = ({
   id = "1",
-  name = "Prato Delicioso",
-  description = "Uma descrição saborosa deste prato especial do nosso restaurante.",
-  price = 29.9,
+  name = "Producto",
+  description = "Descripción del producto.",
+  price = 15000,
   image = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80",
+  category = "",
   onAddToCart = () => console.log("Item added to cart"),
   onViewDetails = () => console.log("View details clicked"),
   featured = false,
   tags = [],
-  prepTime = "25 min",
-  spicyLevel = 0,
-  rating = 4.5,
 }: MenuItemProps) => {
+  const allowedBadges = new Set([
+    "popular",
+    "recomendado",
+    "premium",
+    "bacon",
+    "brutal",
+    "destacado",
+    "parrilla",
+  ]);
+
+  const normalizedTags = (tags || [])
+    .map((t) => t.trim().toLowerCase())
+    .filter((t) => t !== "" && allowedBadges.has(t));
+
+  const uniqueTags: string[] = [];
+  for (const t of normalizedTags) {
+    if (!uniqueTags.includes(t)) uniqueTags.push(t);
+  }
+
+  const visibleBadges: string[] = [];
+  if (featured) visibleBadges.push("destacado");
+  for (const t of uniqueTags) {
+    if (visibleBadges.length >= 2) break;
+    if (t === "destacado") continue;
+    visibleBadges.push(t);
+  }
+
+  const [imgFailed, setImgFailed] = React.useState(false);
+  React.useEffect(() => setImgFailed(false), [image]);
+
+  const isBeverage = category.trim().toLowerCase() === "bebidas";
+
   return (
-    <Card className="w-full max-w-[350px] h-[180px] overflow-hidden flex flex-row bg-black shadow-md hover:shadow-xl transition-all duration-300 rounded-xl border border-green-800 relative group">
-      {featured && (
-        <div className="absolute top-2 left-2 z-10 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
-          <Star className="h-3 w-3 mr-1 fill-white" />
-          Destaque
-        </div>
-      )}
-      <div
-        className="w-1/3 bg-cover bg-center relative overflow-hidden transition-all duration-500 group-hover:w-2/5"
-        style={{ backgroundImage: `url(${image})` }}
+    <Card
+      data-card-version="locura-struct-v3"
+      className="w-full h-[320px] sm:h-[340px] overflow-hidden bg-zinc-950 shadow-md hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-orange-900/50 relative group flex flex-col"
+    >
+      <button
+        type="button"
         onClick={onViewDetails}
+        className="relative block w-full text-left"
+        aria-label={`Ver detalles de ${name}`}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            className="bg-green-800/80 rounded-full p-2"
-          >
-            <Eye className="h-5 w-5 text-white" />
-          </motion.div>
-        </div>
-      </div>
-      <div className="w-2/3 flex flex-col justify-between transition-all duration-500 group-hover:w-3/5">
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start">
-            <h3
-              className="text-lg font-semibold truncate cursor-pointer text-white hover:text-green-400 transition-colors duration-200 flex-1"
-              onClick={onViewDetails}
-            >
-              {name}
-            </h3>
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-3 w-3 ${i < Math.floor(rating) ? "text-green-500 fill-green-500" : "text-gray-600"}`}
+        <div
+          className={
+            isBeverage
+              ? "relative w-full h-36 sm:h-40 bg-zinc-950"
+              : "relative w-full h-36 sm:h-40 overflow-hidden"
+          }
+        >
+          {isBeverage && (
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(234,88,12,0.14),transparent_60%),radial-gradient(circle_at_80%_60%,rgba(220,38,38,0.12),transparent_60%)]" />
+          )}
+
+          {!imgFailed ? (
+            isBeverage ? (
+              <div className="relative w-full h-full flex items-center justify-center p-3 sm:p-4">
+                <img
+                  src={image}
+                  alt={name}
+                  className="block max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                  loading="lazy"
+                  onError={() => setImgFailed(true)}
                 />
-              ))}
-            </div>
-          </div>
-          <p className="text-sm text-gray-400 line-clamp-2 mt-1">
-            {description}
-          </p>
-
-          <div className="flex items-center gap-3 mt-2">
-            <div className="flex items-center text-xs text-gray-300">
-              <Clock className="h-3 w-3 mr-1 text-green-500" />
-              {prepTime}
-            </div>
-            {spicyLevel > 0 && (
-              <div className="flex items-center text-xs text-gray-300">
-                <Flame className="h-3 w-3 mr-1 text-green-500" />
-                {[...Array(3)].map((_, i) => (
-                  <Flame
-                    key={i}
-                    className={`h-2 w-2 ${i < spicyLevel ? "text-green-500" : "text-gray-700"}`}
-                  />
-                ))}
               </div>
-            )}
-          </div>
-
-          {tags && tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {tags.slice(0, 2).map((tag, index) => (
-                <span
-                  key={index}
-                  className="text-xs bg-green-900/50 text-green-400 px-2 py-0.5 rounded-full border border-green-800"
-                >
-                  {tag}
-                </span>
-              ))}
-              {tags.length > 2 && (
-                <span className="text-xs text-gray-400">
-                  +{tags.length - 2}
-                </span>
-              )}
+            ) : (
+              <img
+                src={image}
+                alt={name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                loading="lazy"
+                onError={() => setImgFailed(true)}
+              />
+            )
+          ) : (
+            <div className="absolute inset-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(234,88,12,0.20),transparent_55%),radial-gradient(circle_at_80%_60%,rgba(220,38,38,0.18),transparent_55%)] flex items-end">
+              <div className="p-3">
+                <p className="text-xs font-semibold text-orange-200/90">
+                  Locura Smash
+                </p>
+                <p className="text-[10px] text-zinc-300">Imagen pendiente</p>
+              </div>
             </div>
           )}
 
-          <p className="text-lg font-bold mt-2 text-green-400">
-            R$ {price.toFixed(2)}
+          {!isBeverage && (
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          )}
+        </div>
+
+        {visibleBadges.length > 0 && (
+          <div className="absolute top-2 left-2 flex flex-nowrap gap-1 max-w-[85%] overflow-hidden">
+            {visibleBadges.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center rounded-full bg-zinc-950/80 text-orange-200 border border-orange-900/50 px-2 py-0.5 text-[10px] font-semibold backdrop-blur"
+              >
+                {tag === "destacado" && (
+                  <Star className="h-3 w-3 mr-1 fill-orange-200 text-orange-200" />
+                )}
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </button>
+
+      <div className="flex flex-1 flex-col">
+        <CardContent className="p-4 pb-3 flex flex-col flex-1">
+          <h3
+            className="text-sm sm:text-base font-bold tracking-tight text-white leading-snug cursor-pointer hover:text-orange-200 transition-colors line-clamp-1"
+            onClick={onViewDetails}
+          >
+            {name}
+          </h3>
+
+          <p className="mt-1 text-xs sm:text-sm text-zinc-300 line-clamp-2 h-[2.5rem]">
+            {description || "Bebida o extra"}
           </p>
         </CardContent>
-        <CardFooter className="p-3 pt-0 flex justify-end gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={onViewDetails}
-            className="border-green-800 text-green-400 hover:bg-green-900/30 hover:border-green-700 rounded-full transition-all duration-200 transform hover:scale-105"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            onClick={onAddToCart}
-            className="bg-green-600 hover:bg-green-700 text-white rounded-full transition-all duration-200 transform hover:scale-105"
-          >
-            <PlusCircle className="mr-1 h-4 w-4" />
-            Adicionar
-          </Button>
+
+        <CardFooter className="px-4 pb-4 pt-0 mt-auto">
+          <div className="w-full flex items-end justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-[10px] text-zinc-400">Precio</p>
+              <p className="text-base sm:text-lg font-black text-amber-300 leading-none">
+                {formatGs(price)}
+              </p>
+            </div>
+
+            <motion.div whileTap={{ scale: 0.98 }} className="shrink-0">
+              <Button
+                onClick={onAddToCart}
+                className="h-10 sm:h-11 px-4 sm:px-5 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-orange-600/10"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Agregar
+              </Button>
+            </motion.div>
+          </div>
         </CardFooter>
       </div>
     </Card>
