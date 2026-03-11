@@ -156,8 +156,8 @@ const MenuItems = ({
         onValueChange={setActiveCategory}
         className="w-full"
       >
-        <TabsList className="w-full mb-6 bg-zinc-900 rounded-full p-1 shadow-md border border-orange-900 overflow-x-auto overflow-y-hidden no-scrollbar flex gap-2">
-          {categories.map((category) => (
+<TabsList className="w-full mb-6 bg-zinc-900 rounded-full p-1 shadow-md border border-orange-900 overflow-x-auto overflow-y-hidden no-scrollbar flex flex-nowrap justify-start gap-2">
+  {categories.map((category) => (
     <TabsTrigger
       key={category.id}
       value={category.id}
@@ -166,8 +166,8 @@ const MenuItems = ({
       {category.icon}
       {category.name}
     </TabsTrigger>
-        ))}
-        </TabsList>
+  ))}
+</TabsList>
 
         {showFilters && availableTags.length > 0 && (
           <motion.div
